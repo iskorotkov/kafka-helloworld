@@ -1,0 +1,20 @@
+version: "3.4"
+
+services:
+  kafkahelloworld:
+    image: kafkahelloworld
+    build:
+      context: .
+      dockerfile: kafka-helloworld/Dockerfile
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+
+  kafka:
+    image: iskorotkov/kafka-dependent
+    ports:
+      - 9092
+
+  zookeeper:
+    image: zookeeper
+    expose:
+      - 2181
