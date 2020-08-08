@@ -8,13 +8,17 @@ namespace Producer.Async
     {
         private static async Task Main()
         {
-            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+            var config = new ProducerConfig
+            {
+                BootstrapServers = Environment.GetEnvironmentVariable("BOOTSTRAP_SERVERS") ?? "localhost:9092"
+            };
             var builder = new ProducerBuilder<Null, string>(config);
             using var producer = builder.Build();
             try
             {
                 var message = new Message<Null, string> { Value = "test" };
-                var result = await producer.ProduceAsync("test-topic", message).ConfigureAwait(false);
+                var result = await producer.ProduceAsync(Environment.GetEnvironmentVariable("TOPIC") ?? "my-topic", message)
+                    .ConfigureAwait(false);
                 Console.WriteLine($"Delivered '{result.Value}' to '{result.TopicPartitionOffset}'");
             }
             catch (ProduceException<Null, string> e)

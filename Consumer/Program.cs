@@ -10,14 +10,14 @@ namespace Consumer
         {
             var config = new ConsumerConfig
             {
-                GroupId = "test-consumer-group",
-                BootstrapServers = "localhost:9092",
+                GroupId = Environment.GetEnvironmentVariable("GROUP_ID") ?? "test-consumer-group",
+                BootstrapServers = Environment.GetEnvironmentVariable("BOOTSTRAP_SERVERS") ?? "localhost:9092",
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
             var builder = new ConsumerBuilder<Ignore, string>(config);
             using var consumer = builder.Build();
-            consumer.Subscribe("my-topic");
+            consumer.Subscribe(Environment.GetEnvironmentVariable("TOPIC") ?? "my-topic");
 
             var cts = new CancellationTokenSource();
             Console.CancelKeyPress += (_, e) =>
