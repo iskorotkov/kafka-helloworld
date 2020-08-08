@@ -6,15 +6,55 @@ services:
     build:
       context: .
       dockerfile: Producer.Async/Dockerfile
+    depends_on:
+      - zookeeper
+      - kafka
+    deploy:
+      replicas: 2
+    env_file: .env
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+
+  producer-sync:
+    image: producer-sync
+    build:
+      context: .
+      dockerfile: Producer.Sync/Dockerfile
+    depends_on:
+      - zookeeper
+      - kafka
+    deploy:
+      replicas: 2
+    env_file: .env
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+
+  consumer:
+    image: consumer
+    build:
+      context: .
+      dockerfile: Consumer/Dockerfile
+    depends_on:
+      - zookeeper
+      - kafka
+    deploy:
+      replicas: 3
+    env_file: .env
     volumes:
       - ~/.vsdbg:/remote_debugger:rw
 
   kafka:
-    image: iskorotkov/kafka-dependent
+    image: confluentinc/cp-kafka
+    depends_on:
+      - zookeeper
     ports:
-      - 9092
+      - "9092:9092"
+    expose:
+      - 29092
+    env_file: .env
 
   zookeeper:
     image: zookeeper
     expose:
-      - 2181
+      - "2181"
+    env_file: .env
