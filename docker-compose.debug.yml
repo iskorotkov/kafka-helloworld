@@ -1,11 +1,11 @@
 version: "3.4"
 
 services:
-  kafkahelloworld:
-    image: kafkahelloworld
+  producer-async:
+    image: producer-async
     build:
       context: .
-      dockerfile: kafka-helloworld/Dockerfile
+      dockerfile: Producer.Async/Dockerfile
     volumes:
       - ~/.vsdbg:/remote_debugger:rw
 
